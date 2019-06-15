@@ -1,3 +1,4 @@
+
 package MachineObservable;
 
 import java.util.ArrayList;
@@ -6,15 +7,19 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class MachineComposite extends MachineComponent implements Observer {
+
     private List<MachineComponent> components = new ArrayList<>();
-    private List<MachineComponent> componentstrencats = new ArrayList<>();
+    private List<MachineComponent> brokens = new ArrayList<>();
 
     public void addComponent(MachineComponent mc) {
+
         components.add(mc);
         mc.addObserver(this);
+
         if (mc.isBroken()) {
-            componentstrencats.add(mc);
-            if (!broken && componentstrencats.size()==1) {
+            brokens.add(mc);
+
+            if (!broken && brokens.size() == 1) {
                 notificar();
             }
         }
@@ -22,10 +27,8 @@ public class MachineComposite extends MachineComponent implements Observer {
 
     @Override
     public boolean isBroken() {
-        //Modifiquem el isBroken per simplificar codi i reduir cost aixi evitar una cerca per bucle on el cost seria molt elevat
-       // return broken || subcomponentsTrencats > 0;
-        if(broken || componentstrencats.size()>0)
-        {
+
+        if(broken || brokens.size() > 0) {
             return true;
         }
         return false;
@@ -34,24 +37,28 @@ public class MachineComposite extends MachineComponent implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+
         MachineComponent mc = (MachineComponent) o;
+
         if (mc.isBroken()) {
-            componentsTrencats(mc);
+            brokenComponents(mc);
         } else {
-            componentsReparats(mc);
+            repairedComponents(mc);
         }
     }
 
-    private void componentsReparats(MachineComponent mc) {
+    private void repairedComponents(MachineComponent mc) {
+
         if (!mc.isBroken()) {
-            componentstrencats.remove(mc);
+            brokens.remove(mc);
             notificar();
         }
     }
 
-    private void componentsTrencats(MachineComponent mc) {
+    private void brokenComponents(MachineComponent mc) {
+
         if (!mc.isBroken()) {
-            componentstrencats.add(mc);
+            brokens.add(mc);
             notificar();
         }
     }

@@ -1,5 +1,7 @@
+
 package Test;
 import MachineObservable.*;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 import java.util.Observer;
@@ -7,97 +9,157 @@ import java.util.Observable;
 
 public class TestMachineObservable {
 
-    private Machine mach=new Machine();
-    private MachineComposite mc=new MachineComposite();
+    private Machine m = new Machine();
+    private MachineComposite mc = new MachineComposite();
     private Comprovation c = new Comprovation();
 
+    // Machine
+
     @Test
-    public void checkIsAndSetBroken()
-    {
-        assertFalse(mc.isBroken() && mach.isBroken());
-        mach.setBroken();
-        assertTrue(mach.isBroken());
-        mc.addComponent(mach);
+    public void checkMachineIsBroken() {
+
+        assertFalse(m.isBroken());
+        m.setBroken();
+        assertTrue(m.isBroken());
+    }
+
+    @Test
+    public void checkMachineRepaired() {
+
+        m.setBroken();
+        m.repair();
+        assertFalse(m.isBroken());
+    }
+
+    @Test
+    public void checkMachineBrokenUpdate () {
+
+        m.addObserver(c);
+        m.setBroken();
+        assertTrue(c.first);
+
+        m.setBroken();
+        assertFalse(c.second);
+    }
+
+    @Test
+    public void checkMachineRepairedUpdate () {
+
+        m.addObserver(c);
+        m.setBroken();
+
+        m.repair();
+        assertTrue(c.first);
+
+        m.repair();
+        assertTrue(c.second);
+    }
+    /*
+    @Test
+    public void checkIsAndSetBroken() { //posible duplicado
+
+        assertFalse(mc.isBroken() && m.isBroken());
+        m.setBroken();
+        assertTrue(m.isBroken());
+        mc.addComponent(m);
         assertTrue(mc.isBroken());
 
     }
+    */
+
+    // Machine Composite
 
     @Test
-    public void checkMachineReparation()
-    {
-        mach.setBroken();
-        assertTrue(mach.isBroken());
-        mach.repair();
-        assertFalse(mach.isBroken());
+    public void checkMachineCompositeIsBroken() {
+
+        assertFalse(mc.isBroken());
+
+        m.setBroken();
+        mc.addComponent(m);
+
+        assertTrue(mc.isBroken());
     }
+
     @Test
-    public void checkMachineCompositeReparation()
-    {
+    public void checkMachineCompositeRepaired() { //revisar a partir de este test
+
+        assertFalse(mc.isBroken());
+
+        m.setBroken();
+        mc.addComponent(m);
+
+        assertTrue(mc.isBroken());
+
+        Machine m2 = new Machine();
+        m2.setBroken();
+        mc.addComponent(m2);
+
+        m.repair();
+        assertFalse(mc.isBroken());
+
+        m2.repair();
+        assertTrue(mc.isBroken());
+    }
+
+    @Test
+    public void checkMachineCompositeReparation() {
+
         Machine mach2=new Machine();
         assertFalse(mc.isBroken());
-        mach.setBroken();
+        m.setBroken();
         mach2.setBroken();
-        mc.addComponent(mach);
+        mc.addComponent(m);
         mc.addComponent(mach2);
         assertTrue(mc.isBroken());
-        mach.repair();
+        m.repair();
         mach2.repair();
         assertFalse(mc.isBroken());
 
     }
+
     @Test
-    public void machineCompositeNotRepared()
-    {
+    public void machineCompositeNotRepared() {
+
         Machine mach2=new Machine();
-        // System.out.println(mc.isBroken());
         assertFalse(mc.isBroken());
-        mach.setBroken();
-        mc.addComponent(mach);
+        m.setBroken();
+        mc.addComponent(m);
         assertTrue(mc.isBroken());
         mc.repair(); //Comprovem que MachineComposite no es pot reparar per ella mateixa
         assertTrue(mc.isBroken());
 
     }
 
-    @Test
-    public void machineUpdate () {
-        mach.addObserver(c);
-        mach.setBroken();
-        mach.setBroken();
-        assertFalse(c.doubleUpdate);
-        mach.repair();
-        assertTrue(c.doubleUpdate);
-    }
+    // update test
 
     @Test
-    public void machineCompositeNotReparedUpdate()
-    {
+    public void machineCompositeNotReparedUpdate() {
+
         Machine m2 = new Machine();
         mc.addObserver(c);
 
         mc.addComponent(m2);
-        mc.addComponent(mach);
+        mc.addComponent(m);
 
-        mach.setBroken();
+        m.setBroken();
         m2.setBroken();
         m2.repair();
 
-        assertFalse(c.doubleUpdate);
+        assertFalse(c.second);
     }
 
+    public static class Comprovation implements Observer {
 
-
-
-    public class Comprovation implements Observer {
-        public boolean hasUpdated = false;
-        public boolean doubleUpdate = false;
+        private boolean first = false;
+        private boolean second = false;
 
         @Override
         public void update(Observable o, Object arg) {
-            if (hasUpdated == true) {
-                doubleUpdate = true;
+
+            if (first == true) {
+                second = true;
             }
-            hasUpdated = true;
+            first = true;
         }
     }
 

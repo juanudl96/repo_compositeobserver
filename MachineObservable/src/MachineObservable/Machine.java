@@ -1,5 +1,5 @@
-package MachineObservable;
 
+package MachineObservable;
 
 public class Machine extends MachineComponent  {
 
