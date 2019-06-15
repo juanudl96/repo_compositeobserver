@@ -7,15 +7,15 @@ import java.util.Observer;
 
 public class MachineComposite extends MachineComponent implements Observer {
     private List<MachineComponent> components = new ArrayList<>();
-    private int subcomponentsTrencats = 0;
+    private List<MachineComponent> componentstrencats = new ArrayList<>();
 
     public void addComponent(MachineComponent mc) {
         components.add(mc);
         mc.addObserver(this);
         if (mc.isBroken()) {
-            subcomponentsTrencats += 1;
-            if (!broken && subcomponentsTrencats == 1) {
-
+            componentstrencats.add(mc);
+            if (!broken && componentstrencats.size()==1) {
+                notificar();
             }
         }
     }
@@ -23,7 +23,13 @@ public class MachineComposite extends MachineComponent implements Observer {
     @Override
     public boolean isBroken() {
         //Modifiquem el isBroken per simplificar codi i reduir cost aixi evitar una cerca per bucle on el cost seria molt elevat
-        return broken || subcomponentsTrencats > 0;
+       // return broken || subcomponentsTrencats > 0;
+        if(broken || componentstrencats.size()>0)
+        {
+            return true;
+        }
+        return false;
+
     }
 
     @Override
@@ -37,16 +43,15 @@ public class MachineComposite extends MachineComponent implements Observer {
     }
 
     private void componentsReparats(MachineComponent mc) {
-        subcomponentsTrencats -= 1;
-        if (!isBroken()) {
+        if (!mc.isBroken()) {
+            componentstrencats.remove(mc);
             notificar();
         }
     }
 
     private void componentsTrencats(MachineComponent mc) {
-        boolean trencat = isBroken();
-        subcomponentsTrencats += 1;
-        if (!trencat) {
+        if (!mc.isBroken()) {
+            componentstrencats.add(mc);
             notificar();
         }
     }

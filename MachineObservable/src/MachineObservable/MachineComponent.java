@@ -5,14 +5,15 @@ import java.util.Observable;
 public abstract class MachineComponent extends Observable {
 
     protected boolean broken = false;
+
     public void setBroken() {
         boolean trencat = isBroken();
         broken = true;
         if (!trencat) {
             notificar();
         }}
-    public void repair() {
-        boolean trencat=broken;
+    public void  repair() {
+        boolean trencat=isBroken();
         broken=false;
         if(trencat)
         {
