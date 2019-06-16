@@ -54,18 +54,6 @@ public class TestMachineObservable {
         m.repair();
         assertTrue(c.second);
     }
-    /*
-    @Test
-    public void checkIsAndSetBroken() { //posible duplicado
-
-        assertFalse(mc.isBroken() && m.isBroken());
-        m.setBroken();
-        assertTrue(m.isBroken());
-        mc.addComponent(m);
-        assertTrue(mc.isBroken());
-
-    }
-    */
 
     // Machine Composite
 
@@ -106,11 +94,13 @@ public class TestMachineObservable {
 
         Machine mach2=new Machine();
         assertFalse(mc.isBroken());
+
         m.setBroken();
         mach2.setBroken();
         mc.addComponent(m);
         mc.addComponent(mach2);
         assertTrue(mc.isBroken());
+
         m.repair();
         mach2.repair();
         assertFalse(mc.isBroken());
@@ -118,13 +108,15 @@ public class TestMachineObservable {
     }
 
     @Test
-    public void machineCompositeNotRepared() {
+    public void machineCompositeNotRepaired() {
 
         Machine mach2=new Machine();
         assertFalse(mc.isBroken());
+
         m.setBroken();
         mc.addComponent(m);
         assertTrue(mc.isBroken());
+
         mc.repair(); //Comprovem que MachineComposite no es pot reparar per ella mateixa
         assertTrue(mc.isBroken());
 
@@ -133,7 +125,7 @@ public class TestMachineObservable {
     // update test
 
     @Test
-    public void machineCompositeNotReparedUpdate() {
+    public void machineCompositeNotRepairedUpdate() {
 
         Machine m2 = new Machine();
         mc.addObserver(c);
